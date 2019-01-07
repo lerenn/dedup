@@ -25,12 +25,12 @@ pub struct Directory<'a> {
 }
 
 impl<'a> Directory<'a> {
-    pub fn new(path: String) -> Directory<'a> {
+    pub fn new(path: String, parent: Option<&'a Directory<'a>>) -> Directory<'a> {
         /* Set directory */
         let mut dir = Directory {
             relative_path: path.clone(),
             children: Vec::new(),
-            parent: None,
+            parent,
         };
 
         /* Get children */
@@ -39,8 +39,7 @@ impl<'a> Directory<'a> {
             let child = Path::new(&child_path);
             if child.is_file() == true {
                 let child_path_str = child_path.to_str().unwrap();
-                // dir.children.push(File::new(child_path_str, &dir));
-                println!("{}", child_path_str);    
+                dir.children.push(File::new(child_path_str, &dir));
             }
         }
 

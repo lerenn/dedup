@@ -13,5 +13,5 @@ fn main() {
         params.pruned_directory());
 
     /* Directories */
-    let untouched_filer = Directory::new(params.untouched_directory().to_string());
+    let _untouched_filer = Directory::new(params.untouched_directory().to_string(), None);
 }
