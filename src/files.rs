@@ -1,45 +1,47 @@
 use std::path::Path;
 
-struct File<'a> {
+struct File {
     relative_path: String,
     size: u64,
-    hash: Option<u64>,
-    parent: &'a Directory<'a>,
+    hash: Option<u64>
 }
 
-impl<'a> File<'a> {
-    pub fn new(path: &str, parent: &'a Directory<'a>) -> File<'a> {
+impl File {
+    pub fn new(path: &str) -> File {
         File {
             relative_path: String::from(path),
             size: 0,
             hash: None,
-            parent,
         }
     }
 }
 
-pub struct Directory<'a> {
+pub struct Directory {
     relative_path: String,
-    children: Vec<File<'a>>,
-    parent: Option<&'a Directory<'a>>,
+    files: Vec<File>,
+    directories: Vec<Directory>,
 }
 
-impl<'a> Directory<'a> {
-    pub fn new(path: String, parent: Option<&'a Directory<'a>>) -> Directory<'a> {
+impl Directory {
+    pub fn new(path: &str) -> Directory {
         /* Set directory */
         let mut dir = Directory {
-            relative_path: path.clone(),
-            children: Vec::new(),
-            parent,
+            relative_path: String::from(path),
+            files: Vec::new(),
+            directories: Vec::new(),
         };
 
         /* Get children */
         for entry in Path::new(&path).read_dir().unwrap() {
             let child_path = entry.unwrap().path();
             let child = Path::new(&child_path);
-            if child.is_file() == true {
-                let child_path_str = child_path.to_str().unwrap();
-                dir.children.push(File::new(child_path_str, &dir));
+
+            /* Add this child */
+            let child_path_str = child_path.to_str().unwrap();
+            if child.is_file() == true { /* As file */
+                dir.files.push(File::new(child_path_str));
+            } else { /* As directory */
+                dir.directories.push(Directory::new(child_path_str));
             }
         }
 
