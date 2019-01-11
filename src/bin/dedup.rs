@@ -1,6 +1,8 @@
+extern crate dedup;
 extern crate argparse;
 
-use self::argparse::{ArgumentParser, Store};
+use dedup::Directory;
+use argparse::{ArgumentParser, Store};
 
 pub struct Parameters {
     untouched_directory: String,
@@ -34,4 +36,16 @@ impl Parameters {
     pub fn pruned_directory(&self) -> &String {
         &self.pruned_directory
     }
+}
+
+fn main() {
+    /* Get parameters */
+    let mut params = Parameters::new();
+    params.parse();
+    println!("Dedup will compare {} and {}, the latter will be pruned.",
+        params.untouched_directory(),
+        params.pruned_directory());
+
+    /* Directories */
+    let _untouched_filer = Directory::new(params.untouched_directory());
 }
