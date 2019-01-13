@@ -4,10 +4,12 @@ pub struct File {
     hash: Option<u64>
 }
 
-pub fn new(path: &str) -> File {
-    File {
-        relative_path: String::from(path),
-        size: 0,
-        hash: None,
+impl File {
+    pub fn new(path: &str) -> File {
+        File {
+            relative_path: String::from(path),
+            size: 0,
+            hash: None,
+        }
     }
 }

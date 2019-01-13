@@ -8,9 +8,17 @@ pub struct Dedup {
     pruned_directory: Directory,
 }
 
-pub fn new(untouched_directory: &str, pruned_directory: &str) -> Dedup {
-    Dedup {
-        untouched_directory: directory::new(untouched_directory),
-        pruned_directory: directory::new(pruned_directory),
+impl Dedup {
+    pub fn new(untouched_directory: &str, pruned_directory: &str) -> Dedup {
+        Dedup {
+            untouched_directory: Directory::new(untouched_directory),
+            pruned_directory: Directory::new(pruned_directory),
+        }
+    }
+
+    pub fn clean(&mut self) {
+        // for file in self.untouched_directory.iter() {
+        //     println!("{}", file);
+        // }
     }
 }
