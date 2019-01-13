@@ -1,7 +1,6 @@
 extern crate dedup;
 extern crate argparse;
 
-use dedup::Directory;
 use argparse::{ArgumentParser, Store};
 
 pub struct Parameters {
@@ -47,5 +46,5 @@ fn main() {
         params.pruned_directory());
 
     /* Directories */
-    let _untouched_filer = Directory::new(params.untouched_directory());
+    let _dd = dedup::new(params.untouched_directory(), params.pruned_directory());
 }
