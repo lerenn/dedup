@@ -3,7 +3,7 @@ use file::File;
 use std::path::Path;
 
 pub struct Directory {
-    relative_path: String,
+    path: String,
     files: Vec<File>,
     directories: Vec<Directory>,
 }
@@ -12,7 +12,7 @@ impl Directory {
     pub fn new(path: &str) -> Directory {
         /* Set directory */
         let mut dir = Directory {
-            relative_path: String::from(path),
+            path: String::from(path),
             files: Vec::new(),
             directories: Vec::new(),
         };
@@ -35,7 +35,20 @@ impl Directory {
         dir
     }
 
+    pub fn list_files(&self) {
+        /* See for directories */
+        for directory in self.directories.iter() {
+            directory.list_files();
+        }
+
+        /* See for files */
+        for file in self.files.iter() {
+            println!("{}", file.path());
+        }
+    }
+
     pub fn remove_duplicated_files(&mut self, compared_directory: &mut Directory) {
+        self.list_files(); /* TO REMOVE */
         /* TODO */
     }
 

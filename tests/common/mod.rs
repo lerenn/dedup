@@ -14,13 +14,17 @@ pub fn setup() -> std::io::Result<()> {
 
     /* Write directory A */
     create_dir("tests/data/A")?;
-    write_file("tests/data/A/A.log", "AAAA")?;
-    write_file("tests/data/A/B.log", "BBBB")?;
+    create_dir("tests/data/A/A")?;
+    write_file("tests/data/A/A/A.log", "AAAA")?;
+    create_dir("tests/data/A/B")?;
+    write_file("tests/data/A/B/B.log", "BBBB")?;
 
     /* Write directory B */
     create_dir("tests/data/B")?;
-    write_file("tests/data/B/A.log", "AAAA")?;
-    write_file("tests/data/B/C.log", "CCCC")?;
+    create_dir("tests/data/B/A")?;
+    write_file("tests/data/B/A/A.log", "AAAA")?;
+    create_dir("tests/data/B/C")?;
+    write_file("tests/data/B/C/C.log", "CCCC")?;
     Ok(())
 }
 

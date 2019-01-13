@@ -47,5 +47,5 @@ fn main() {
         params.pruned_directory());
 
     /* Directories */
-    let _dd = Dedup::new(params.untouched_directory(), params.pruned_directory());
+    Dedup::new(params.untouched_directory(), params.pruned_directory()).clean();
 }
