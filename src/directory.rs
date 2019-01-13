@@ -34,4 +34,12 @@ impl Directory {
         /* Return value */
         dir
     }
+
+    pub fn remove_duplicated_files(&mut self, compared_directory: &mut Directory) {
+        /* TODO */
+    }
+
+    pub fn remove_empty_directories(&mut self) {
+        /* TODO */
+    }
 }

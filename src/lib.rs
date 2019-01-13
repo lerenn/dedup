@@ -17,8 +17,7 @@ impl Dedup {
     }
 
     pub fn clean(&mut self) {
-        // for file in self.untouched_directory.iter() {
-        //     println!("{}", file);
-        // }
+        self.pruned_directory.remove_duplicated_files(&mut self.untouched_directory);
+        self.pruned_directory.remove_empty_directories();
     }
 }
