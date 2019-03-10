@@ -1,4 +1,4 @@
-use std::fs::{File, delete_dir_all, create_dir};
+use std::fs::{File, remove_dir_all, create_dir};
 use std::io::ErrorKind::NotFound;
 use std::io::{Write};
 
@@ -30,7 +30,7 @@ pub fn setup() -> std::io::Result<()> {
 
 fn clean(path: &str) {
     /* Remove data test */
-    match delete_dir_all(path) {
+    match remove_dir_all(path) {
         Ok(_) => { /* Nothing to do */ },
         Err(err) => {
             match err.kind() {

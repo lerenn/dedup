@@ -36,35 +36,22 @@ impl Directory {
         dir
     }
 
-    #[allow(dead_code)]
-    pub fn list_files(&self) {
-        /* See for directories */
-        for directory in self.directories.iter() {
-            directory.list_files();
-        }
-
-        /* See for files */
-        for file in self.files.iter() {
-            println!("{}", file.path());
-        }
-    }
-
-    pub fn delete_duplicated_files_from(&mut self, compared_directory: &mut Directory) {
+    pub fn delete_identical_files_from(&mut self, compared_directory: &mut Directory) {
         /* Recursively remove it to child directories */
         for directory in self.directories.iter_mut() {
-            directory.delete_duplicated_files_from(compared_directory);
+            directory.delete_identical_files_from(compared_directory);
         }
 
         /* Compare with files in this directory */
         for file in self.files.iter_mut() {
-            compared_directory.delete_file(file);
+            compared_directory.delete_identical_file(file);
         }
     }
 
-    pub fn delete_file(&mut self, file: &mut File) {
+    pub fn delete_identical_file(&mut self, file: &mut File) {
         /* Recursively remove it from child directories */
         for directory in self.directories.iter_mut() {
-            directory.delete_file(file);
+            directory.delete_identical_file(file);
         }
 
         /* Compare with files in this directory */

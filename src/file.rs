@@ -1,9 +1,12 @@
-use directory::Directory;
+extern crate blake2;
+
+use self::blake2::{Blake2b, Digest};
+use std::{fs, io};
 
 pub struct File {
     path: String,
     size: u64,
-    hash: Option<u64>
+    hash: Option<&[u8]>
 }
 
 impl File {
@@ -23,17 +26,22 @@ impl File {
         self.size
     }
 
-    pub fn hash(&mut self) -> u64 {
+    pub fn hash(&mut self) -> &[u8] {
         match self.hash {
             None => {
-                self.hash = Some(self.compute_hash());
+                let hash = self.compute_hash().unwrap()
+                self.hash = Some(hash);
                 self.hash()
             },
             Some(hash) => hash,
         }
     }
 
-    pub fn compute_hash(&self) -> u64 {
-        0 /* TODO */
+    pub fn compute_hash(&self) -> std::io::Result<(&[u8])> {
+        let mut file = fs::File::open(&self.path)?;
+        let mut hasher = Blake2b::new();
+        io::copy(&mut file, &mut hasher)?;
+        let hash = hasher.result().as_slice();
+        Ok(hash)
     }
 }
