@@ -48,22 +48,59 @@ impl Directory {
         }
     }
 
-    pub fn delete_identical_file(&mut self, file: &mut File) {
+    /* Return true if an identical as been found and is deleted
+     * Return False otherwise */
+    pub fn delete_identical_file(&mut self, preserved_file: &mut File) {
         /* Recursively remove it from child directories */
         for directory in self.directories.iter_mut() {
-            directory.delete_identical_file(file);
+            directory.delete_identical_file(preserved_file);
         }
 
         /* Compare with files in this directory */
-        let size = file.size();
-        for directory_file in self.files.iter_mut() {
-            if directory_file.size() == size && directory_file.hash() == file.hash() {
-                println!("{} and {} are the same", directory_file.path(), file.path());
+        let size = preserved_file.size();
+        let mut indexes_to_delete: Vec<usize> = Vec::new();
+        for (directory_file_pos, directory_file) in self.files.iter_mut().enumerate() {
+            if directory_file.size() == size && directory_file.compare_hash(preserved_file) {
+                std::fs::remove_file(directory_file.path()).unwrap();
+                println!("{} and {} are the same, the latter has been deleted",
+                    preserved_file.path(), directory_file.path());
+                indexes_to_delete.push(directory_file_pos);
             }
+        }
+
+        /* Delete identical files (greater index first) */
+        while let Some(index) = indexes_to_delete.pop() {
+            self.files.remove(index);
         }
     }
 
     pub fn delete_empty_directories(&mut self) {
-        /* TODO */
+        /* Recursively remove empty subsubdirectories */
+        for directory in self.directories.iter_mut() {
+            directory.delete_empty_directories();
+        }
+
+        /* Detect empty direct subdirectories */
+        let mut indexes_to_delete: Vec<usize> = Vec::new();
+        for (subdir_pos, subdir) in self.directories.iter().enumerate() {
+            if subdir.files_nb() == 0 {
+                std::fs::remove_dir(subdir.path()).unwrap();
+                println!("{} deleted", subdir.path());
+                indexes_to_delete.push(subdir_pos);
+            }
+        }
+
+        /* Delete identical files (greater index first) */
+        while let Some(index) = indexes_to_delete.pop() {
+            self.directories.remove(index);
+        }
+    }
+
+    pub fn files_nb(&self) -> usize {
+        self.files.len()
+    }
+
+    pub fn path(&self) -> &String {
+        &self.path
     }
 }

@@ -6,7 +6,7 @@ use std::{fs, io};
 pub struct File {
     path: String,
     size: u64,
-    hash: Option<&[u8]>
+    hash: Option<[u8; 64]>
 }
 
 impl File {
@@ -26,22 +26,42 @@ impl File {
         self.size
     }
 
-    pub fn hash(&mut self) -> &[u8] {
+    pub fn hash(&mut self) -> [u8; 64] {
         match self.hash {
             None => {
-                let hash = self.compute_hash().unwrap()
-                self.hash = Some(hash);
+                // Calculate hash 
+                self.hash = Some(self.compute_hash().unwrap());
+
+                // Return result
                 self.hash()
             },
             Some(hash) => hash,
         }
     }
 
-    pub fn compute_hash(&self) -> std::io::Result<(&[u8])> {
+    fn compute_hash(&self) -> std::io::Result<([u8; 64])> {
         let mut file = fs::File::open(&self.path)?;
         let mut hasher = Blake2b::new();
         io::copy(&mut file, &mut hasher)?;
-        let hash = hasher.result().as_slice();
-        Ok(hash)
+        let hash = hasher.result();
+
+        // Return hash as array
+        let mut out_hash: [u8; 64] = [0; 64];
+        out_hash[..64].clone_from_slice(hash.as_slice());
+        Ok(out_hash)
+    }
+
+    pub fn compare_hash(&mut self, file: &mut File) -> bool {
+        // Get hashes
+        let self_hash = self.hash();
+        let file_hash = file.hash();
+
+        for i in 0..64 {
+            if self_hash[i] != file_hash[i] {
+                return false;
+            }
+        }
+
+        true
     }
 }

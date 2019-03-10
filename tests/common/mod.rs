@@ -23,6 +23,7 @@ pub fn setup() -> std::io::Result<()> {
     create_dir("tests/data/B")?;
     create_dir("tests/data/B/A")?;
     write_file("tests/data/B/A/A.log", "AAAA")?;
+    write_file("tests/data/B/A/A2.log", "AAAA")?;
     create_dir("tests/data/B/C")?;
     write_file("tests/data/B/C/C.log", "CCCC")?;
     Ok(())
