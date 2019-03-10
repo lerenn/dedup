@@ -12,14 +12,14 @@ pub fn setup() -> std::io::Result<()> {
     clean("tests/data");
     create_dir("tests/data")?;
 
-    /* Write directory A */
+    // Write directory A 
     create_dir("tests/data/A")?;
     create_dir("tests/data/A/A")?;
     write_file("tests/data/A/A/A.log", "AAAA")?;
     create_dir("tests/data/A/B")?;
     write_file("tests/data/A/B/B.log", "BBBB")?;
 
-    /* Write directory B */
+    // Write directory B 
     create_dir("tests/data/B")?;
     create_dir("tests/data/B/A")?;
     write_file("tests/data/B/A/A.log", "AAAA")?;
@@ -30,12 +30,12 @@ pub fn setup() -> std::io::Result<()> {
 }
 
 fn clean(path: &str) {
-    /* Remove data test */
+    // Remove data test 
     match remove_dir_all(path) {
-        Ok(_) => { /* Nothing to do */ },
+        Ok(_) => { }, // Nothing to do 
         Err(err) => {
             match err.kind() {
-                NotFound => { /* Nothing to do */ },
+                NotFound => { }, // Nothing to do
                 err => {
                     panic!("There has been an error when deleting directory {}: {:?}", path, err);
                 }

@@ -20,4 +20,9 @@ impl Dedup {
         self.untouched_directory.delete_identical_files_from(&mut self.pruned_directory);
         self.pruned_directory.delete_empty_directories();
     }
+
+    pub fn set_dry_run(&mut self, value: bool) {
+        self.untouched_directory.set_dry_run(value);
+        self.pruned_directory.set_dry_run(value);
+    }
 }
