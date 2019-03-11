@@ -112,7 +112,7 @@ impl Directory {
         // Detect empty direct subdirectories 
         let mut indexes_to_delete: Vec<usize> = Vec::new();
         for (subdir_pos, subdir) in self.directories.iter().enumerate() {
-            if subdir.files_nb() == 0 {
+            if subdir.files_nb() == 0 && subdir.dir_nb() == 0 {
                 println!("{} is empty", subdir.path());
                 indexes_to_delete.push(subdir_pos);
             }
@@ -126,6 +126,10 @@ impl Directory {
 
     pub fn files_nb(&self) -> usize {
         self.files.len()
+    }
+
+    pub fn dir_nb(&self) -> usize {
+        self.directories.len()
     }
 
     pub fn path(&self) -> &String {
