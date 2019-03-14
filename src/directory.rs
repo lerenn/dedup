@@ -11,17 +11,28 @@ pub struct Directory {
 }
 
 impl Directory {
-    pub fn new(path: &str) -> Directory {
+    pub fn new(str_path: &str) -> Directory {
+        let path = Path::new(&str_path);
+
+        // Get absolute path buffer
+        let absolute_path;
+        if path.is_relative() {
+            let absolute_path_buf = path.canonicalize().unwrap();
+            absolute_path = String::from(absolute_path_buf.to_str().unwrap());
+        } else {
+            absolute_path = String::from(str_path);
+        }
+
         // Set directory 
         let mut dir = Directory {
-            path: String::from(path),
+            path: absolute_path,
             files: Vec::new(),
             directories: Vec::new(),
             dry_run: false,
         };
 
-        // Get children 
-        for entry in Path::new(&path).read_dir().unwrap() {
+        // Get children
+        for entry in path.read_dir().unwrap() {
             let child_path = entry.unwrap().path();
             let child_metadata = metadata(&child_path).unwrap();
 
@@ -39,6 +50,11 @@ impl Directory {
     }
 
     pub fn delete_identical_files_from(&mut self, compared_directory: &mut Directory) {
+        // Check existance of it self
+        if self.exists() == false {
+            return;
+        }
+
         // Recursively remove it to child directories 
         for directory in self.directories.iter_mut() {
             directory.delete_identical_files_from(compared_directory);
@@ -82,15 +98,36 @@ impl Directory {
     // Return true if an identical as been found and is deleted
     // Return False otherwise
     pub fn delete_identical_file(&mut self, preserved_file: &mut File) {
+        // Check existance of it self
+        if self.exists() == false {
+            return;
+        }
+
         // Recursively remove it from child directories 
         for directory in self.directories.iter_mut() {
             directory.delete_identical_file(preserved_file);
+        }
+
+        // Check if preserved file exists
+        if preserved_file.exists() == false {
+            return;
         }
 
         // Compare with files in this directory 
         let size = preserved_file.size();
         let mut indexes_to_delete: Vec<usize> = Vec::new();
         for (directory_file_pos, directory_file) in self.files.iter_mut().enumerate() {
+            // Check if files exists
+            if directory_file.exists() == false {
+                continue;
+            }
+
+            // Check if the two file are not just one
+            if directory_file.path() == preserved_file.path() {
+                continue;
+            }
+
+            // Check if files are identical
             if directory_file.size() == size && directory_file.compare_hash(preserved_file) {
                 println!("{} == {}", preserved_file.path(), directory_file.path());
                 indexes_to_delete.push(directory_file_pos);
@@ -144,5 +181,9 @@ impl Directory {
 
         // Set dry run to itself
         self.dry_run = value;
+    }
+
+    pub fn exists(&self) -> bool {
+        Path::new(&self.path).exists()
     }
 }

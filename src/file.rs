@@ -2,6 +2,7 @@ extern crate blake2;
 
 use self::blake2::{Blake2b, Digest};
 use std::{fs, io};
+use std::path::{PathBuf, Path};
 
 pub struct File {
     path: String,
@@ -11,8 +12,13 @@ pub struct File {
 
 impl File {
     pub fn new(path: &str, size: u64) -> File {
+        // Get absolute path buffer
+        let path_buf = PathBuf::from(path);
+        let absolute_path_buf = fs::canonicalize(&path_buf).unwrap();
+
+        // Init file
         File {
-            path: String::from(path),
+            path: String::from(absolute_path_buf.to_str().unwrap()),
             size,
             hash: None,
         }
@@ -63,5 +69,9 @@ impl File {
         }
 
         true
+    }
+
+    pub fn exists(&self) -> bool {
+        Path::new(&self.path).exists()
     }
 }
